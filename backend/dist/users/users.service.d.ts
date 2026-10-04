@@ -7,4 +7,5 @@ export declare class UsersService {
     findByEmailWithPassword(email: string): Promise<UserDocument | null>;
     findById(id: string): Promise<UserDocument | null>;
     createUser(name: string, email: string, passwordHash: string): Promise<UserDocument>;
+    findByIds(ids: string[]): Promise<UserDocument[]>;
 }

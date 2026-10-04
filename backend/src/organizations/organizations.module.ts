@@ -8,6 +8,7 @@ import {
 
 import { MembershipModule } from '../membership/membership.module.js';
 import { OrganizationsController } from './organizations.controller.js';
+import { UsersModule } from '../users/users.module.js';
 
 
 @Module({
@@ -15,7 +16,8 @@ import { OrganizationsController } from './organizations.controller.js';
     MongooseModule.forFeature([
       { name: Organization.name, schema: OrganizationSchema },
     ]),
-    MembershipModule
+    MembershipModule,
+    UsersModule
   ],
   providers: [OrganizationsService],
   exports: [OrganizationsService],

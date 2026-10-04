@@ -40,4 +40,12 @@ export class MembershipService {
             .find({userId})
             .exec()
     }
+
+    async findByOrganizationId(
+        organizationId: string,
+    ): Promise<MembershipDocument[]> {
+        return this.membershipModel
+            .find({organizationId})
+            .exec();
+    }
 }

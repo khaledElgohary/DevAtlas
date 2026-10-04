@@ -10,6 +10,7 @@ import { OrganizationsService } from './organizations.service.js';
 import { Organization, OrganizationSchema, } from './schemas/organization.schema.js';
 import { MembershipModule } from '../membership/membership.module.js';
 import { OrganizationsController } from './organizations.controller.js';
+import { UsersModule } from '../users/users.module.js';
 let OrganizationsModule = class OrganizationsModule {
 };
 OrganizationsModule = __decorate([
@@ -18,7 +19,8 @@ OrganizationsModule = __decorate([
             MongooseModule.forFeature([
                 { name: Organization.name, schema: OrganizationSchema },
             ]),
-            MembershipModule
+            MembershipModule,
+            UsersModule
         ],
         providers: [OrganizationsService],
         exports: [OrganizationsService],

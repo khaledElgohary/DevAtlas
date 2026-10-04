@@ -1,6 +1,7 @@
 import type { Request } from 'express';
 import { CreateOrganizationDto } from './dto/create-organization.dto.js';
 import { OrganizationsService } from './organizations.service.js';
+import { OrganizationParamsDto } from './dto/organization-param.dto.js';
 export declare class OrganizationsController {
     private readonly organizationsService;
     constructor(organizationsService: OrganizationsService);
@@ -15,6 +16,12 @@ export declare class OrganizationsController {
         id: string;
         name: string;
         slug: string;
+        role: import("../membership/schemas/membership.schema.js").OrganizationRole;
+    }[]>;
+    listMembers(params: OrganizationParamsDto, req: Request): Promise<{
+        userId: string;
+        name: string | null;
+        email: string | null;
         role: import("../membership/schemas/membership.schema.js").OrganizationRole;
     }[]>;
 }

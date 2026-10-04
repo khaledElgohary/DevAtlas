@@ -42,4 +42,10 @@ export class UsersService {
             passwordHash,
         });
     }
+
+    async findByIds(ids: string[]): Promise<UserDocument[]> {
+        return this.userModel
+            .find({ _id: { $in: ids } })
+            .exec();
+    }
 }

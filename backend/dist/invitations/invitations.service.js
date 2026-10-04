@@ -11,6 +11,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { MongoServerError } from 'mongodb';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Invitation } from './schemas/invitation.schema.js';
 import { MembershipService } from '../membership/membership.service.js';
@@ -106,6 +107,12 @@ let InvitationsService = class InvitationsService {
                     role: claimedInvitation.role,
                 };
             });
+        }
+        catch (error) {
+            if (error instanceof MongoServerError && error.code === 11000) {
+                throw new ConflictException('Duplicate key error');
+            }
+            throw error;
         }
         finally {
             await session.endSession();

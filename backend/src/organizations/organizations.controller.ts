@@ -4,12 +4,14 @@ import {
   Post,
   Get,
   Req,
+  Param,
   UseGuards,
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { SessionAuthGuard } from '../auth/guards/session-auth.guard.js';
 import { CreateOrganizationDto } from './dto/create-organization.dto.js';
 import { OrganizationsService } from './organizations.service.js';
+import { OrganizationParamsDto } from './dto/organization-param.dto.js';
 
 @Controller('organizations')
 export class OrganizationsController {
@@ -36,6 +38,18 @@ export class OrganizationsController {
     list(@Req() req: Request){
         return this.organizationsService.listForUser(
             req.session.userId!,
+        )
+    }
+
+    @Get(':organizationId/members')
+    @UseGuards(SessionAuthGuard)
+    listMembers(
+        @Param() params: OrganizationParamsDto,
+        @Req() req: Request,
+    ){
+        return this.organizationsService.listMembers(
+            req.session.userId!,
+            params.organizationId
         )
     }
 }

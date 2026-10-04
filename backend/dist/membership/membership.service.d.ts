@@ -6,4 +6,5 @@ export declare class MembershipService {
     findMembership(userId: string, organizationId: string): Promise<MembershipDocument | null>;
     createMembership(userId: string, organizationId: string, role?: OrganizationRole, session?: ClientSession): Promise<MembershipDocument>;
     findByUserId(userId: string): Promise<MembershipDocument[]>;
+    findByOrganizationId(organizationId: string): Promise<MembershipDocument[]>;
 }

@@ -10,10 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Body, Controller, Post, Get, Req, UseGuards, } from '@nestjs/common';
+import { Body, Controller, Post, Get, Req, Param, UseGuards, } from '@nestjs/common';
 import { SessionAuthGuard } from '../auth/guards/session-auth.guard.js';
 import { CreateOrganizationDto } from './dto/create-organization.dto.js';
 import { OrganizationsService } from './organizations.service.js';
+import { OrganizationParamsDto } from './dto/organization-param.dto.js';
 let OrganizationsController = class OrganizationsController {
     organizationsService;
     constructor(organizationsService) {
@@ -24,6 +25,9 @@ let OrganizationsController = class OrganizationsController {
     }
     list(req) {
         return this.organizationsService.listForUser(req.session.userId);
+    }
+    listMembers(params, req) {
+        return this.organizationsService.listMembers(req.session.userId, params.organizationId);
     }
 };
 __decorate([
@@ -43,6 +47,15 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], OrganizationsController.prototype, "list", null);
+__decorate([
+    Get(':organizationId/members'),
+    UseGuards(SessionAuthGuard),
+    __param(0, Param()),
+    __param(1, Req()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [OrganizationParamsDto, Object]),
+    __metadata("design:returntype", void 0)
+], OrganizationsController.prototype, "listMembers", null);
 OrganizationsController = __decorate([
     Controller('organizations'),
     __metadata("design:paramtypes", [OrganizationsService])

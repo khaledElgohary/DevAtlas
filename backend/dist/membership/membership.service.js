@@ -31,6 +31,11 @@ let MembershipService = class MembershipService {
             .find({ userId })
             .exec();
     }
+    async findByOrganizationId(organizationId) {
+        return this.membershipModel
+            .find({ organizationId })
+            .exec();
+    }
 };
 MembershipService = __decorate([
     Injectable(),

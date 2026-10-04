@@ -1,4 +1,5 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { MongoServerError } from 'mongodb';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import type { Model, Connection } from 'mongoose';
 import { Invitation } from './schemas/invitation.schema.js';
@@ -153,7 +154,14 @@ export class InvitationsService {
                     role: claimedInvitation.role,
                 }
             });
-        } finally {
+        } 
+        catch(error){
+            if (error instanceof MongoServerError && error.code === 11000){
+                throw new ConflictException('Duplicate key error');
+            }
+            throw error;
+        }
+        finally {
             await session.endSession();
         }
     }

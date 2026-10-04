@@ -40,6 +40,11 @@ let UsersService = class UsersService {
             passwordHash,
         });
     }
+    async findByIds(ids) {
+        return this.userModel
+            .find({ _id: { $in: ids } })
+            .exec();
+    }
 };
 UsersService = __decorate([
     Injectable(),

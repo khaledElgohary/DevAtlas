@@ -10,17 +10,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
+import { MongoServerError } from 'mongodb';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Organization } from './schemas/organization.schema.js';
 import { MembershipService } from '../membership/membership.service.js';
+import { UsersService } from '../users/users.service.js';
 let OrganizationsService = class OrganizationsService {
     organizationModel;
     membershipService;
+    usersService;
     connection;
-    constructor(organizationModel, membershipService, connection) {
+    constructor(organizationModel, membershipService, usersService, connection) {
         this.organizationModel = organizationModel;
         this.membershipService = membershipService;
+        this.usersService = usersService;
         this.connection = connection;
     }
     async findBySlug(slug) {
@@ -40,6 +44,13 @@ let OrganizationsService = class OrganizationsService {
                 return organization;
             });
         }
+        catch (error) {
+            if (error instanceof MongoServerError && error.code === 11000) {
+                throw new ConflictException('An organization with this slug already exists');
+            }
+            ;
+            throw error;
+        }
         finally {
             await session.endSession();
         }
@@ -58,12 +69,36 @@ let OrganizationsService = class OrganizationsService {
             role: memberships.find((membership) => membership.organizationId.equals(organization._id)).role,
         }));
     }
+    async requireMembership(userId, organizationId) {
+        const membership = await this.membershipService.findMembership(userId, organizationId);
+        if (!membership) {
+            throw new ForbiddenException('User is not a member of this organization');
+        }
+        return membership;
+    }
+    async listMembers(userId, organizationId) {
+        await this.requireMembership(userId, organizationId);
+        const memberships = await this.membershipService.findByOrganizationId(organizationId);
+        const users = await this.usersService.findByIds(memberships.map((membership) => membership.userId.toString()));
+        const usersById = new Map(users.map((user) => [user._id.toString(), user]));
+        return memberships.map((membership) => {
+            const memberId = membership.userId.toString();
+            const user = usersById.get(memberId);
+            return {
+                userId: memberId,
+                name: user?.name ?? null,
+                email: user?.email ?? null,
+                role: membership.role,
+            };
+        });
+    }
 };
 OrganizationsService = __decorate([
     Injectable(),
     __param(0, InjectModel(Organization.name)),
-    __param(2, InjectConnection()),
-    __metadata("design:paramtypes", [Function, MembershipService, Function])
+    __param(3, InjectConnection()),
+    __metadata("design:paramtypes", [Function, MembershipService,
+        UsersService, Function])
 ], OrganizationsService);
 export { OrganizationsService };
 //# sourceMappingURL=organizations.service.js.map
