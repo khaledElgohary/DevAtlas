@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import devAtlasLogo from "@/assets/devatlas-lockup.svg";
 import ResonanceHeading from "@/components/ResonanceHeading";
-import {useNavigate} from "react-router";
+import { useNavigate } from "react-router";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -20,7 +20,7 @@ export default function LoginPage() {
 
     try {
       await login({ email, password }).unwrap();
-      navigate("/", {replace:true}); 
+      navigate("/", { replace: true });
     } catch {
       // The mutation's 'error' state will handle displaying the error message
     }
@@ -28,7 +28,7 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-dvh">
-      <section className="flex w-full items-center justify-center p-6 lg:w-1/2">
+      <section className="flex w-full items-center justify-center p-6 lg:w-[40%]">
         <img
           src={devAtlasLogo}
           alt="DevAtlas"
@@ -88,12 +88,12 @@ export default function LoginPage() {
       </section>
 
       <section
-        className="hidden h-dvh w-1/2 py-2 pr-2 lg:block"
+        className="hidden h-dvh w-[60%] py-2 pr-2 lg:block"
         aria-hidden="true"
       >
         <div className="h-full w-full overflow-hidden rounded-3xl border border-border">
           <video
-            className="pointer-events-none h-full w-full object-cover opacity-80"
+            className="pointer-events-none h-full w-full object-cover opacity-25"
             autoPlay
             muted
             loop
@@ -101,6 +101,9 @@ export default function LoginPage() {
             disablePictureInPicture
             disableRemotePlayback
             controlsList="nodownload nofullscreen noremoteplayback"
+            onLoadedMetadata={(event) => {
+              event.currentTarget.playbackRate = 0.25;
+            }}
           >
             <source src="/videos/login-loop.mp4" type="video/mp4" />
           </video>
