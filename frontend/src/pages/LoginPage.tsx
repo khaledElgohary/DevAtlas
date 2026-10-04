@@ -91,7 +91,7 @@ export default function LoginPage() {
         className="hidden h-dvh w-[60%] py-2 pr-2 lg:block"
         aria-hidden="true"
       >
-        <div className="h-full w-full overflow-hidden rounded-3xl border border-border">
+        <div className="h-full w-full overflow-hidden rounded-3xl border border-border shadow-xl shadow-black/20">
           <video
             className="pointer-events-none h-full w-full object-cover opacity-25"
             autoPlay

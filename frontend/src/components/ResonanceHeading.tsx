@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import {
   animate,
   motion,
   useMotionValue,
   useReducedMotion,
   useTransform,
-} from 'motion/react';
+} from "motion/react";
 
 export default function ResonanceHeading() {
   const reduceMotion = useReducedMotion();
@@ -13,19 +13,11 @@ export default function ResonanceHeading() {
 
   const x = useTransform(phase, [0, 1, 2, 3], [0, -5, 6, -2]);
   const skewX = useTransform(phase, [0, 1, 2, 3], [0, -5, 4, -2]);
-  const redOpacity = useTransform(phase, (value) =>
-    value > 0 ? 0.9 : 0,
-  );
-  const waveOpacity = useTransform(phase, (value) =>
-    value > 0 ? 0 : 1,
-  );
-  const symbolOpacity = useTransform(phase, (value) =>
-    value > 0 ? 1 : 0,
-  );
+  const redOpacity = useTransform(phase, (value) => (value > 0 ? 0.9 : 0));
+  const waveOpacity = useTransform(phase, (value) => (value > 0 ? 0 : 1));
+  const symbolOpacity = useTransform(phase, (value) => (value > 0 ? 1 : 0));
   const textShadow = useTransform(phase, (value) =>
-    value > 0
-      ? '-3px 0 #ef4444, 3px 0 #7f1d1d'
-      : '0px 0 transparent',
+    value > 0 ? "-3px 0 #ef4444, 3px 0 #7f1d1d" : "0px 0 transparent",
   );
 
   useEffect(() => {
@@ -33,17 +25,13 @@ export default function ResonanceHeading() {
 
     if (reduceMotion) return;
 
-    const controls = animate(
-      phase,
-      [0, 0, 1, 3, 0, 2, 1, 0],
-      {
-        duration: 4,
-        times: [0, 0.75, 0.76, 0.78, 0.8, 0.82, 0.85, 0.88],
-        ease: 'steps(1, end)',
-        repeat: Infinity,
-        repeatDelay: 0.5,
-      },
-    );
+    const controls = animate(phase, [0, 0, 1, 3, 0, 2, 1, 0], {
+      duration: 4,
+      times: [0, 0.75, 0.76, 0.78, 0.8, 0.82, 0.85, 0.88],
+      ease: "steps(1, end)",
+      repeat: Infinity,
+      repeatDelay: 0.5,
+    });
 
     return () => controls.stop();
   }, [phase, reduceMotion]);
@@ -55,14 +43,13 @@ export default function ResonanceHeading() {
         style={{ x, skewX, textShadow }}
       >
         Welcome back
-
         <motion.span
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 text-red-500"
           style={{
             opacity: redOpacity,
             x: -8,
-            clipPath: 'inset(38% 0 38% 0)',
+            clipPath: "inset(38% 0 38% 0)",
           }}
         >
           Welcome back
@@ -72,7 +59,6 @@ export default function ResonanceHeading() {
       <span
         aria-hidden="true"
         className="relative inline-grid h-9 w-9 -translate-y-0.5 place-items-center tracking-normal"
-
       >
         <motion.span
           className="absolute text-2xl"
@@ -81,8 +67,12 @@ export default function ResonanceHeading() {
           👋
         </motion.span>
         <motion.span
-          className="absolute text-3xl text-red-500"
-          style={{ opacity: symbolOpacity, x }}
+          className="absolute text-3xl text-[#FFD60A]"
+          style={{
+            opacity: symbolOpacity,
+            x,
+            textShadow: '0 0 6px #FFD60A, 0 0 18px rgb(255 214 10 / 80%)',
+          }}
         >
           ⟁
         </motion.span>
