@@ -1,0 +1,160 @@
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import type { Model, Connection } from 'mongoose';
+import { Invitation } from './schemas/invitation.schema.js';
+import { MembershipService } from '../membership/membership.service.js';
+import { CreateInvitationDto } from './dto/create-invitation.dto.js';
+import { createHash, randomBytes } from 'crypto';
+import { UsersService } from '../users/users.service.js';
+
+@Injectable()
+export class InvitationsService {
+    constructor(
+        @InjectModel(Invitation.name)
+        private readonly invitationModel: Model<Invitation>,
+        private readonly membershipService: MembershipService,
+        private readonly usersService: UsersService,
+        @InjectConnection()
+        private readonly connection: Connection,
+    ){}
+
+
+    private async requireOwnerOrAdmin(
+        userId: string,
+        organizationId: string,
+    ): Promise<void>{
+        const membership = await this.membershipService.findMembership(
+            userId,
+            organizationId,
+        );
+
+        if(
+            !membership ||
+            !['owner', 'admin'].includes(membership.role)
+        ){
+            throw new ForbiddenException(
+                'Only organization owners and admins can invite users',
+            )
+        }
+    }
+
+
+    async createInvitation(
+        dto: CreateInvitationDto,
+        inviterId: string,
+    ){
+        await this.requireOwnerOrAdmin(inviterId, dto.organizationId)
+
+        const existingUser = await this.usersService.findByEmail(dto.email);
+        if(existingUser){
+            const membership = await this.membershipService.findMembership(
+                existingUser._id.toString(),
+                dto.organizationId,
+            );
+            if(membership){
+                throw new ConflictException('User is already a member of this organization');
+            }
+        }
+
+        const token = randomBytes(32).toString('hex')
+        const tokenHash = createHash('sha256').update(token).digest('hex')
+
+        const invitation = await this.invitationModel.create({
+            organizationId: dto.organizationId,
+            email: dto.email,
+            role: dto.role,
+            invitedBy: inviterId,
+            tokenHash,
+            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        });
+
+        return {
+            id: invitation._id.toString(),
+            email: invitation.email,
+            role: invitation.role,
+            expiresAt: invitation.expiresAt,
+            token,
+        }
+    }
+
+
+    private async findValidInvitation(token:string){
+        const tokenHash = createHash('sha256')
+            .update(token)
+            .digest('hex');
+        
+        return this.invitationModel
+            .findOne({
+                tokenHash,
+                expiresAt: {$gt: new Date()},
+            })
+            .exec();
+    }
+
+    private async requireMatchingUser(
+        userId: string,
+        invitationEmail: string,
+    ): Promise<void>{
+        const user = await this.usersService.findById(userId);
+        if(!user){
+            throw new UnauthorizedException(
+                'User not found',
+            );
+        }
+
+        if(user.email !== invitationEmail){
+            throw new ForbiddenException(
+                'This invitation belongs to a different email address',
+            );
+        }
+    }
+
+
+    async acceptInvitation(
+        token:string,
+        userId: string,
+    ){
+        const invitation = await this.findValidInvitation(token);
+        if(!invitation){
+            throw new BadRequestException('Invitation is invalid or expired')
+        }
+
+        await this.requireMatchingUser(userId, invitation.email);
+
+        const session = await this.connection.startSession();
+
+        try{
+            return await session.withTransaction(async() => {
+                const claimedInvitation = await this.invitationModel.findOneAndUpdate(
+                    {
+                        _id: invitation._id,
+                        acceptedAt: null,
+                        expiresAt: {$gt: new Date()},
+                    },
+                    {
+                        $set: {acceptedAt: new Date()}
+                    },
+                    {session, new:true},
+                );
+
+                if(!claimedInvitation){
+                    throw new BadRequestException('Invitation is invalid or expired');
+                }
+                
+                await this.membershipService.createMembership(
+                    userId,
+                    claimedInvitation.organizationId.toString(),
+                    claimedInvitation.role,
+                    session,
+                );
+
+                return {
+                    organizationId: claimedInvitation.organizationId.toString(),
+                    role: claimedInvitation.role,
+                }
+            });
+        } finally {
+            await session.endSession();
+        }
+    }
+}
