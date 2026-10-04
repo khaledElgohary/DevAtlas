@@ -4,7 +4,6 @@ import * as React from "react";
 import { useGetCurrentUserQuery, useGetOrganizationsQuery } from "@/store/api";
 
 import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
 import {
@@ -19,9 +18,6 @@ import {
   AudioLinesIcon,
   TerminalIcon,
   TerminalSquareIcon,
-  BotIcon,
-  BookOpenIcon,
-  Settings2Icon,
   FrameIcon,
   PieChartIcon,
   MapIcon,
