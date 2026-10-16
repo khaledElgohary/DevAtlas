@@ -28,7 +28,7 @@ let MembershipService = class MembershipService {
     }
     async findByUserId(userId) {
         return this.membershipModel
-            .find({ userId })
+            .findOne({ userId })
             .exec();
     }
     async findByOrganizationId(organizationId) {

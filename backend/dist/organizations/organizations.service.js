@@ -10,10 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, } from '@nestjs/common';
 import { MongoServerError } from 'mongodb';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Organization } from './schemas/organization.schema.js';
+import { Organization, } from './schemas/organization.schema.js';
 import { MembershipService } from '../membership/membership.service.js';
 import { UsersService } from '../users/users.service.js';
 let OrganizationsService = class OrganizationsService {
@@ -33,22 +33,32 @@ let OrganizationsService = class OrganizationsService {
             .exec();
     }
     async createOrganization(name, slug, creatorId) {
+        const existingMembership = await this.membershipService.findByUserId(creatorId);
+        if (existingMembership) {
+            throw new ConflictException('User is already a member of an organization');
+        }
         const session = await this.connection.startSession();
         try {
             return await session.withTransaction(async () => {
-                const [organization] = await this.organizationModel.create([{
+                const [organization] = await this.organizationModel.create([
+                    {
                         name: name.trim(),
-                        slug: slug.trim().toLowerCase()
-                    }], { session });
+                        slug: slug.trim().toLowerCase(),
+                    },
+                ], { session });
                 await this.membershipService.createMembership(creatorId, organization._id.toString(), 'owner', session);
                 return organization;
             });
         }
         catch (error) {
             if (error instanceof MongoServerError && error.code === 11000) {
-                throw new ConflictException('An organization with this slug already exists');
+                if (error.keyPattern?.userId) {
+                    throw new ConflictException('You already belong to an organization');
+                }
+                if (error.keyPattern?.slug) {
+                    throw new ConflictException('An organization with this slug already exists');
+                }
             }
-            ;
             throw error;
         }
         finally {
@@ -56,18 +66,24 @@ let OrganizationsService = class OrganizationsService {
         }
     }
     async listForUser(userId) {
-        const memberships = await this.membershipService.findByUserId(userId);
-        const organizations = await this.organizationModel
-            .find({
-            _id: { $in: memberships.map((membership) => membership.organizationId) },
-        })
+        const membership = await this.membershipService.findByUserId(userId);
+        if (!membership) {
+            return [];
+        }
+        const organization = await this.organizationModel
+            .findById(membership.organizationId)
             .exec();
-        return organizations.map((organization) => ({
-            id: organization._id.toString(),
-            name: organization.name,
-            slug: organization.slug,
-            role: memberships.find((membership) => membership.organizationId.equals(organization._id)).role,
-        }));
+        if (!organization) {
+            return [];
+        }
+        return [
+            {
+                id: organization._id.toString(),
+                name: organization.name,
+                slug: organization.slug,
+                role: membership.role,
+            },
+        ];
     }
     async requireMembership(userId, organizationId) {
         const membership = await this.membershipService.findMembership(userId, organizationId);

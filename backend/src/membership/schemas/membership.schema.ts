@@ -32,6 +32,6 @@ export class Membership {
 export const MembershipSchema = SchemaFactory.createForClass(Membership);
 
 MembershipSchema.index(
-    { userId: 1, organizationId: 1 },
+    { userId: 1},
     { unique: true },
 )

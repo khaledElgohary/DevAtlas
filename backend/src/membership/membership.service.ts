@@ -35,9 +35,9 @@ export class MembershipService {
         return membership;
     }
 
-    async findByUserId(userId: string): Promise<MembershipDocument[]> {
+    async findByUserId(userId: string): Promise<MembershipDocument | null> {
         return this.membershipModel
-            .find({userId})
+            .findOne({userId})
             .exec()
     }
 

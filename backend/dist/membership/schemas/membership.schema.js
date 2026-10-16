@@ -44,5 +44,5 @@ Membership = __decorate([
 ], Membership);
 export { Membership };
 export const MembershipSchema = SchemaFactory.createForClass(Membership);
-MembershipSchema.index({ userId: 1, organizationId: 1 }, { unique: true });
+MembershipSchema.index({ userId: 1 }, { unique: true });
 //# sourceMappingURL=membership.schema.js.map
