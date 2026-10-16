@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module.js';
 import { OrganizationsModule } from './organizations/organizations.module.js';
 import { MembershipModule } from './membership/membership.module.js';
 import { InvitationsModule } from './invitations/invitations.module.js';
+import { TeamsModule } from './teams/teams.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -39,6 +40,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     MembershipModule,
 
     InvitationsModule,
+
+    TeamsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
