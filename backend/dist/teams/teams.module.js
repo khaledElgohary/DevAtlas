@@ -5,10 +5,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { TeamsService } from './teams.service.js';
+import { Team, TeamSchema } from './schemas/teams.schema.js';
+import { MembershipModule } from '../membership/membership.module.js';
+import { TeamsController } from './teams.controller.js';
 let TeamsModule = class TeamsModule {
 };
 TeamsModule = __decorate([
-    Module({})
+    Module({
+        imports: [
+            MongooseModule.forFeature([{ name: Team.name, schema: TeamSchema }]),
+            MembershipModule
+        ],
+        exports: [TeamsService],
+        providers: [TeamsService],
+        controllers: [TeamsController]
+    })
 ], TeamsModule);
 export { TeamsModule };
 //# sourceMappingURL=teams.module.js.map
