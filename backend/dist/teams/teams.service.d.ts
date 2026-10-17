@@ -8,4 +8,5 @@ export declare class TeamsService {
     findByOrganizationId(organizationId: string, userId: string): Promise<TeamDocument[]>;
     createTeam(name: string, organizationId: string, creatorId: string): Promise<TeamDocument>;
     private requireOwnerOrAdmin;
+    findById(teamId: string): Promise<TeamDocument | null>;
 }

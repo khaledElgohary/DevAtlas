@@ -54,6 +54,10 @@ let TeamsService = class TeamsService {
             throw new ForbiddenException("This action requires the user to be an owner or admin of the organization.");
         }
     }
+    async findById(teamId) {
+        const team = await this.teamModel.findById(teamId).exec();
+        return team;
+    }
 };
 TeamsService = __decorate([
     Injectable(),

@@ -57,4 +57,10 @@ export class TeamsService {
         }
     }
 
+
+    async findById(teamId: string): Promise<TeamDocument | null>{
+        const team = await this.teamModel.findById(teamId).exec();
+        return team;
+    }
+
 }
