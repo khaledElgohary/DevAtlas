@@ -1,5 +1,6 @@
 import { ServicesService } from './services.service.js';
 import { FetchServicesDto } from './dto/fetch-services-dto.js';
+import { CreateServiceDto } from './dto/create-service-dto.js';
 import type { Request } from 'express';
 export declare class ServicesController {
     private readonly servicesService;
@@ -12,4 +13,12 @@ export declare class ServicesController {
         organizationId: string;
         description: string;
     }[]>;
+    createService(req: Request, dto: CreateServiceDto): Promise<{
+        id: string;
+        name: string;
+        description: string;
+        kind: "api" | "worker" | "web-app" | "library";
+        teamId: string;
+        organizationId: string;
+    }>;
 }

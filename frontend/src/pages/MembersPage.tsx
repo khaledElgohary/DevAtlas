@@ -18,7 +18,6 @@ export default function MembersPage() {
   return (
     <section className="space-y-6">
       <div className="space-y-2">
-        <p className="trave-overline">People</p>
         <h2 className="text-h2">Team members</h2>
         <p className="text-body text-muted-foreground">
           {currentTeam

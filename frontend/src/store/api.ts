@@ -56,6 +56,19 @@ export const api = createApi({
     >({
       query: ({ teamId }) => `/team-membership/${teamId}/members`,
     }),
+
+    getServiceList: builder.query<
+      {
+        id: string;
+        name:string;
+        kind: 'api' | 'worker' | 'wep-app' | 'library';
+        teamId: string;
+        organizationId: string;
+        description: string;
+      }[],{teamId:string}
+    >({
+      query: ({teamId}) => `/services/${teamId}`
+    })
   }),
 });
 
@@ -65,4 +78,5 @@ export const {
   useLogoutMutation,
   useGetMyTeamsQuery,
   useGetTeamMembersQuery,
+  useGetServiceListQuery,
 } = api;

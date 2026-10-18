@@ -10,10 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Controller, Get, Param, Req, UseGuards, } from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, UseGuards, Body, } from '@nestjs/common';
 import { ServicesService } from './services.service.js';
 import { SessionAuthGuard } from '../auth/guards/session-auth.guard.js';
 import { FetchServicesDto } from './dto/fetch-services-dto.js';
+import { CreateServiceDto } from './dto/create-service-dto.js';
 let ServicesController = class ServicesController {
     servicesService;
     constructor(servicesService) {
@@ -21,6 +22,9 @@ let ServicesController = class ServicesController {
     }
     listServices(params, req) {
         return this.servicesService.findByTeamId(params.teamId, req.session.userId);
+    }
+    createService(req, dto) {
+        return this.servicesService.createService(dto, req.session.userId);
     }
 };
 __decorate([
@@ -32,6 +36,15 @@ __decorate([
     __metadata("design:paramtypes", [FetchServicesDto, Object]),
     __metadata("design:returntype", void 0)
 ], ServicesController.prototype, "listServices", null);
+__decorate([
+    UseGuards(SessionAuthGuard),
+    Post(),
+    __param(0, Req()),
+    __param(1, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, CreateServiceDto]),
+    __metadata("design:returntype", void 0)
+], ServicesController.prototype, "createService", null);
 ServicesController = __decorate([
     Controller('services'),
     __metadata("design:paramtypes", [ServicesService])
