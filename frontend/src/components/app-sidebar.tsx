@@ -3,6 +3,8 @@
 import * as React from "react";
 import { useGetCurrentUserQuery, useGetMyTeamsQuery } from "@/store/api";
 
+import { BrandLogo } from "@/components/brand-logo";
+import { Link } from "react-router";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
@@ -13,10 +15,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import {
-  GalleryVerticalEndIcon,
-  TerminalSquareIcon,
-} from "lucide-react";
+import { GalleryVerticalEndIcon, TerminalSquareIcon } from "lucide-react";
 
 const data = {
   navMain: [
@@ -48,7 +47,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const organization = user?.organization;
 
-  const { data: assignedTeams = [], isLoading: isLoadingTeams, error: teamsError } = useGetMyTeamsQuery();
+  const {
+    data: assignedTeams = [],
+    isLoading: isLoadingTeams,
+    error: teamsError,
+  } = useGetMyTeamsQuery();
 
   const teams = assignedTeams.map((team) => {
     return {
@@ -63,25 +66,37 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
+        <Link
+          to="/"
+          aria-label="Trave overview"
+          className="flex h-12 items-center px-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
+        >
+          <BrandLogo className="h-7 group-data-[collapsible=icon]:hidden" />
+          <img
+            src="/trave-icon.svg"
+            alt=""
+            className="hidden size-7 group-data-[collapsible=icon]:block"
+          />
+        </Link>
 
-        <p className="px-4 py-2 text-sm font-medium text-muted-foreground hidden group-data-[state=expanded]:flex">
-          {organization?.name ?? "No Organization"}
+        <p className="px-2 py-2 text-small font-medium text-muted-foreground hidden group-data-[state=expanded]:flex">
+          {organization?.name ?? "No organization"}
         </p>
-        {
-          isLoadingTeams ?
-          <p className="px-4 py-2 text-sm font-medium text-muted-foreground hidden group-data-[state=expanded]:flex">
+        {isLoadingTeams ? (
+          <p className="px-2 py-2 text-small font-medium text-muted-foreground hidden group-data-[state=expanded]:flex">
             Loading teams...
-          </p>:
-          teamsError ?
-          <p className="px-4 py-2 text-sm font-medium text-muted-foreground hidden group-data-[state=expanded]:flex">
+          </p>
+        ) : teamsError ? (
+          <p className="px-2 py-2 text-small font-medium text-muted-foreground hidden group-data-[state=expanded]:flex">
             Unable to load teams
-          </p> :
-          teams.length === 0 ?
-          <p className="px-4 py-2 text-sm font-medium text-muted-foreground hidden group-data-[state=expanded]:flex">
-            No teams available
-          </p> :
+          </p>
+        ) : teams.length === 0 ? (
+          <p className="px-2 py-2 text-small font-medium text-muted-foreground hidden group-data-[state=expanded]:flex">
+            No teams assigned
+          </p>
+        ) : (
           <TeamSwitcher teams={teams} />
-        }
+        )}
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

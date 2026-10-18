@@ -6,6 +6,7 @@ import {
 import { AppSidebar } from "@/components/app-sidebar";
 import { Outlet } from "react-router";
 import { useLocation } from "react-router";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function DashboardLayout() {
   const location = useLocation();
@@ -13,17 +14,22 @@ export default function DashboardLayout() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 items-center gap-2 border-b px-4">
+        <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border-subtle px-4">
           <SidebarTrigger />
-          <h1 className="font-heading text-xl font-semibold uppercase tracking-wide">
+          <h1 className="text-body font-semibold">
             {location.pathname === "/"
               ? "Overview"
               : location.pathname === "/services"
                 ? "Services"
-                : location.pathname.slice(1)}
+                : location.pathname === "/members"
+                  ? "Members"
+                  : "Workspace"}
           </h1>
+          <div className="ml-auto">
+            <ThemeToggle />
+          </div>
         </header>
-        <main className="flex-1 space-y-4 p-6">
+        <main className="mx-auto w-full max-w-[1280px] flex-1 space-y-6 p-4 md:p-6">
           <Outlet />
         </main>
       </SidebarInset>

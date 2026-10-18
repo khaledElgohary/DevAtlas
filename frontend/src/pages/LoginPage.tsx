@@ -4,11 +4,13 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import traveLogo from "@/assets/trave-lockup.svg";
-import ResonanceHeading from "@/components/ResonanceHeading";
+import { BrandLogo } from "@/components/brand-logo";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { useReducedMotion } from "motion/react";
 import { useNavigate } from "react-router";
 
 export default function LoginPage() {
+  const reduceMotion = useReducedMotion();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -28,14 +30,18 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-dvh">
-      <section className="flex w-full items-center justify-center p-6 lg:w-[40%]">
-        <img
-          src={traveLogo}
-          alt="Trave"
-          className="absolute left-8 top-8 h-auto w-48"
-        />
-        <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-8">
-          <ResonanceHeading />
+      <section className="relative flex min-h-dvh w-full items-center justify-center px-6 pb-16 pt-36 lg:w-[40%] lg:px-12">
+        <BrandLogo className="absolute left-8 top-8 h-10" />
+        <div className="absolute right-6 top-8">
+          <ThemeToggle />
+        </div>
+        <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-6">
+          <div className="space-y-2">
+            <h1 className="text-h1">Welcome back</h1>
+            <p className="text-body text-muted-foreground">
+              Sign in to your team's workspace.
+            </p>
+          </div>
 
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -57,7 +63,7 @@ export default function LoginPage() {
                 type="button"
                 variant="link"
                 disabled
-                className="h-auto p-0 text-xs text-muted-foreground"
+                className="h-auto p-0 text-caption"
               >
                 Forgot password?
               </Button>
@@ -81,7 +87,12 @@ export default function LoginPage() {
             </Alert>
           )}
 
-          <Button type="submit" disabled={isLoading} className="w-full">
+          <Button
+            type="submit"
+            size="lg"
+            disabled={isLoading}
+            className="w-full"
+          >
             {isLoading ? "Logging in..." : "Log in"}
           </Button>
         </form>
@@ -91,16 +102,21 @@ export default function LoginPage() {
         className="hidden h-dvh w-[60%] py-2 pr-2 lg:block"
         aria-hidden="true"
       >
-        <div className="h-full w-full overflow-hidden rounded-3xl border border-border shadow-xl shadow-black/20">
+        <div className="h-full w-full overflow-hidden rounded-xl border border-border-subtle bg-ink">
           <video
             className="pointer-events-none h-full w-full object-cover opacity-25"
-            autoPlay
+            autoPlay={!reduceMotion}
             muted
             loop
             playsInline
             disablePictureInPicture
             disableRemotePlayback
             controlsList="nodownload nofullscreen noremoteplayback"
+            ref={(video) => {
+              if (!video) return;
+              if (reduceMotion) video.pause();
+              else void video.play().catch(() => {});
+            }}
             onLoadedMetadata={(event) => {
               event.currentTarget.playbackRate = 0.25;
             }}

@@ -1,10 +1,26 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" class="dark" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/trave-icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trave</title>
+    <meta name="theme-color" content="#0F1012" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      try {
+        const theme =
+          localStorage.getItem("trave-theme") === "light" ? "light" : "dark";
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.className = theme;
+      } catch {
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

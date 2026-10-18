@@ -16,7 +16,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { ChevronsUpDownIcon } from "lucide-react";
-import {useAppSelector, useAppDispatch} from '@/store/hooks';
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setSelectedTeamId } from "@/store/teamSlice";
 
 export function TeamSwitcher({
@@ -28,7 +28,6 @@ export function TeamSwitcher({
     logo: React.ReactNode;
   }[];
 }) {
-
   const dispatch = useAppDispatch();
   const { isMobile } = useSidebar();
   const activeTeamId = useAppSelector((state) => state.team.selectedTeamId);
@@ -38,9 +37,9 @@ export function TeamSwitcher({
   React.useEffect(() => {
     const selectionExists = teams.some((team) => team.id === activeTeamId);
 
-    const nextId = selectionExists ? activeTeamId : (teams[0]?.id ?? null)
+    const nextId = selectionExists ? activeTeamId : (teams[0]?.id ?? null);
 
-    if (nextId !== activeTeamId){
+    if (nextId !== activeTeamId) {
       dispatch(setSelectedTeamId(nextId));
     }
   }, [activeTeamId, teams, dispatch]);
@@ -58,11 +57,11 @@ export function TeamSwitcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg border border-red-500/20 bg-red-500/10 text-red-400">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg border border-border bg-surface-2 text-muted-foreground">
                 {activeTeam.logo}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{activeTeam.name} Workspace</span>
+                <span className="truncate font-medium">{activeTeam.name}</span>
               </div>
               <ChevronsUpDownIcon className="ml-auto" />
             </SidebarMenuButton>
@@ -73,16 +72,17 @@ export function TeamSwitcher({
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
+            <DropdownMenuLabel className="trave-overline">
               Teams
             </DropdownMenuLabel>
             {teams.map((team) => (
               <DropdownMenuItem
                 key={team.id}
                 onClick={() => dispatch(setSelectedTeamId(team.id))}
-                className="gap-2 p-2"
+                data-selected={team.id === activeTeamId}
+                className="gap-2 p-2 data-[selected=true]:bg-lime-tint data-[selected=true]:text-accent-text"
               >
-                <div className="flex size-6 items-center justify-center rounded-md border border-red-500/20 bg-red-500/10 text-red-400">
+                <div className="flex size-6 items-center justify-center rounded-md border border-border bg-surface-2 text-muted-foreground">
                   {team.logo}
                 </div>
                 {team.name}
