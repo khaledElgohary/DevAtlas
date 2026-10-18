@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ChevronsUpDownIcon } from "lucide-react";
 import {useAppSelector, useAppDispatch} from '@/store/hooks';
-import { selectOrganization } from "@/store/organizationSlice";
+import { setSelectedTeamId } from "@/store/teamSlice";
 
 export function TeamSwitcher({
   teams,
@@ -26,13 +26,12 @@ export function TeamSwitcher({
     id: string;
     name: string;
     logo: React.ReactNode;
-    role: string;
   }[];
 }) {
 
   const dispatch = useAppDispatch();
   const { isMobile } = useSidebar();
-  const activeTeamId = useAppSelector((state) => state.organization.selectedOrganizationId);
+  const activeTeamId = useAppSelector((state) => state.team.selectedTeamId);
 
   const activeTeam = teams.find((team) => team.id === activeTeamId) ?? teams[0];
 
@@ -42,7 +41,7 @@ export function TeamSwitcher({
     const nextId = selectionExists ? activeTeamId : (teams[0]?.id ?? null)
 
     if (nextId !== activeTeamId){
-      dispatch(selectOrganization(nextId));
+      dispatch(setSelectedTeamId(nextId));
     }
   }, [activeTeamId, teams, dispatch]);
 
@@ -63,8 +62,7 @@ export function TeamSwitcher({
                 {activeTeam.logo}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{activeTeam.name}</span>
-                <span className="truncate text-xs">{activeTeam.role}</span>
+                <span className="truncate font-medium">{activeTeam.name} Workspace</span>
               </div>
               <ChevronsUpDownIcon className="ml-auto" />
             </SidebarMenuButton>
@@ -76,12 +74,12 @@ export function TeamSwitcher({
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Organizations
+              Teams
             </DropdownMenuLabel>
             {teams.map((team) => (
               <DropdownMenuItem
                 key={team.id}
-                onClick={() => dispatch(selectOrganization(team.id))}
+                onClick={() => dispatch(setSelectedTeamId(team.id))}
                 className="gap-2 p-2"
               >
                 <div className="flex size-6 items-center justify-center rounded-md border border-red-500/20 bg-red-500/10 text-red-400">

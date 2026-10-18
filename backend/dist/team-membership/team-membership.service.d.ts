@@ -21,4 +21,10 @@ export declare class TeamMembershipService {
     removeMember(teamId: string, userId: string, requesterId: string): Promise<{
         message: string;
     }>;
+    findByUserId(userId: string): Promise<TeamMembershipDocument[]>;
+    listMyTeams(userId: string): Promise<{
+        id: string;
+        name: string;
+        organizationId: string;
+    }[]>;
 }

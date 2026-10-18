@@ -29,6 +29,9 @@ let TeamMembershipController = class TeamMembershipController {
     async removeMember(params, req) {
         return this.teamMembershipService.removeMember(params.teamId, params.userId, req.session.userId);
     }
+    async listMyTeams(req) {
+        return this.teamMembershipService.listMyTeams(req.session.userId);
+    }
 };
 __decorate([
     UseGuards(SessionAuthGuard),
@@ -57,6 +60,14 @@ __decorate([
     __metadata("design:paramtypes", [AddTeamMemberDto, Object]),
     __metadata("design:returntype", Promise)
 ], TeamMembershipController.prototype, "removeMember", null);
+__decorate([
+    UseGuards(SessionAuthGuard),
+    Get("/me/teams"),
+    __param(0, Req()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], TeamMembershipController.prototype, "listMyTeams", null);
 TeamMembershipController = __decorate([
     Controller('team-membership'),
     __metadata("design:paramtypes", [TeamMembershipService])

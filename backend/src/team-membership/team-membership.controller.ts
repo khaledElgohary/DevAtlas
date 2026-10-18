@@ -51,5 +51,13 @@ export class TeamMembershipController {
         return this.teamMembershipService.removeMember(params.teamId, params.userId, req.session.userId!)
     }
 
+    @UseGuards(SessionAuthGuard)
+    @Get("/me/teams")
+    async listMyTeams(
+        @Req() req:Request,
+    ){
+        return this.teamMembershipService.listMyTeams(req.session.userId!)
+    }
+
 
 }

@@ -20,6 +20,13 @@ import {
 import { useLogoutMutation } from "@/store/api";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
+import {useAppDispatch} from "@/store/hooks";
+
+import { setSelectedTeamId } from "@/store/teamSlice";
+
+import {api} from "@/store/api";
+
+
 export function NavUser({
   user,
 }: {
@@ -31,17 +38,21 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
 
+  const dispatch = useAppDispatch();
+
+
   const [logout, { isLoading: isLoggingOut, error: logoutError }] =
     useLogoutMutation();
 
   async function handleLogout() {
     try {
       await logout().unwrap();
+      dispatch(setSelectedTeamId(null));
+      dispatch(api.util.resetApiState());
     } catch {
       // Handle logout error if needed
     }
   }
-
   const initials =
     user.name
       .trim()

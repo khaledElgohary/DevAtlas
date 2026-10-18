@@ -86,11 +86,11 @@ export class OrganizationsService {
     }
   }
 
-  async listForUser(userId: string) {
+  async getForUser(userId: string) {
     const membership = await this.membershipService.findByUserId(userId);
 
     if (!membership) {
-      return [];
+      return null;
     }
 
     const organization = await this.organizationModel
@@ -98,17 +98,15 @@ export class OrganizationsService {
       .exec();
 
     if (!organization) {
-      return [];
+      return null;
     }
 
-    return [
-      {
-        id: organization._id.toString(),
-        name: organization.name,
-        slug: organization.slug,
-        role: membership.role,
-      },
-    ];
+    return {
+      id: organization._id.toString(),
+      name: organization.name,
+      slug: organization.slug,
+      role: membership.role,
+    };
   }
 
   private async requireMembership(

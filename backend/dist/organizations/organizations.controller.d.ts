@@ -12,12 +12,12 @@ export declare class OrganizationsController {
     } & {
         id: string;
     }>;
-    list(req: Request): Promise<{
+    getMyOrganization(req: Request): Promise<{
         id: string;
         name: string;
         slug: string;
         role: import("../membership/schemas/membership.schema.js").OrganizationRole;
-    }[]>;
+    } | null>;
     listMembers(params: OrganizationParamsDto, req: Request): Promise<{
         userId: string;
         name: string | null;

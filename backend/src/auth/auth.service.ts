@@ -1,14 +1,16 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service.js';
 import { MongoServerError } from 'mongodb';
 import { RegisterDto } from './dto/register.dto.js';
 import * as argon2 from 'argon2';
 import { LoginDto } from './dto/login.dto.js';
+import { OrganizationsService } from '../organizations/organizations.service.js';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly usersService: UsersService,
+        private readonly organizationService: OrganizationsService,
     ){}
 
     async register(dto: RegisterDto){
@@ -68,13 +70,16 @@ export class AuthService {
         const user = await this.usersService.findById(userId);
 
         if (!user){
-            throw new ConflictException('User not found');
+            throw new UnauthorizedException('User not found');
         }
+
+        const organization = await this.organizationService.getForUser(userId);
 
         return {
             id: user._id.toString(),
             name: user.name,
             email: user.email,
+            organization: organization,
         }
     }
 }

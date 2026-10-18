@@ -58,6 +58,9 @@ let TeamsService = class TeamsService {
         const team = await this.teamModel.findById(teamId).exec();
         return team;
     }
+    async findByIds(teamIds) {
+        return this.teamModel.find({ _id: { $in: teamIds } }).exec();
+    }
 };
 TeamsService = __decorate([
     Injectable(),

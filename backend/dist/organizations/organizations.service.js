@@ -65,25 +65,23 @@ let OrganizationsService = class OrganizationsService {
             await session.endSession();
         }
     }
-    async listForUser(userId) {
+    async getForUser(userId) {
         const membership = await this.membershipService.findByUserId(userId);
         if (!membership) {
-            return [];
+            return null;
         }
         const organization = await this.organizationModel
             .findById(membership.organizationId)
             .exec();
         if (!organization) {
-            return [];
+            return null;
         }
-        return [
-            {
-                id: organization._id.toString(),
-                name: organization.name,
-                slug: organization.slug,
-                role: membership.role,
-            },
-        ];
+        return {
+            id: organization._id.toString(),
+            name: organization.name,
+            slug: organization.slug,
+            role: membership.role,
+        };
     }
     async requireMembership(userId, organizationId) {
         const membership = await this.membershipService.findMembership(userId, organizationId);

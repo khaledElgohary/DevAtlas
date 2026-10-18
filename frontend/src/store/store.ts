@@ -1,11 +1,11 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {api} from './api';
-import organizationReducer from './organizationSlice';
+import teamReducer from './teamSlice';
 
 export const store = configureStore({
     reducer: {
         [api.reducerPath]: api.reducer,
-        organization: organizationReducer,
+        team: teamReducer,
     },
     middleware:(getDefaultMiddleware) =>
         getDefaultMiddleware().concat(api.middleware),

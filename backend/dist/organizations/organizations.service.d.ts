@@ -10,12 +10,12 @@ export declare class OrganizationsService {
     constructor(organizationModel: Model<Organization>, membershipService: MembershipService, usersService: UsersService, connection: Connection);
     findBySlug(slug: string): Promise<OrganizationDocument | null>;
     createOrganization(name: string, slug: string, creatorId: string): Promise<OrganizationDocument>;
-    listForUser(userId: string): Promise<{
+    getForUser(userId: string): Promise<{
         id: string;
         name: string;
         slug: string;
         role: import("../membership/schemas/membership.schema.js").OrganizationRole;
-    }[]>;
+    } | null>;
     private requireMembership;
     listMembers(userId: string, organizationId: string): Promise<{
         userId: string;

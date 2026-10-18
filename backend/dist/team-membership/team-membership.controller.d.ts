@@ -20,4 +20,9 @@ export declare class TeamMembershipController {
     removeMember(params: AddTeamMemberDto, req: Request): Promise<{
         message: string;
     }>;
+    listMyTeams(req: Request): Promise<{
+        id: string;
+        name: string;
+        organizationId: string;
+    }[]>;
 }

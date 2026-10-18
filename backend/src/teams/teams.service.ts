@@ -63,4 +63,8 @@ export class TeamsService {
         return team;
     }
 
+    async findByIds(teamIds: string[]): Promise<TeamDocument[]>{
+        return this.teamModel.find({ _id: { $in: teamIds } }).exec();
+    }
+
 }

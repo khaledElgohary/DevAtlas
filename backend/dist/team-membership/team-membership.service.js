@@ -97,6 +97,19 @@ let TeamMembershipService = class TeamMembershipService {
         }
         return { message: "Membership successfully removed" };
     }
+    async findByUserId(userId) {
+        return this.teamMembershipModel.find({ userId }).exec();
+    }
+    async listMyTeams(userId) {
+        const memberships = await this.findByUserId(userId);
+        const teamIds = memberships.map((membership) => membership.teamId.toString());
+        const teams = await this.teamsService.findByIds(teamIds);
+        return teams.map((team) => ({
+            id: team._id.toString(),
+            name: team.name,
+            organizationId: team.organizationId.toString()
+        }));
+    }
 };
 TeamMembershipService = __decorate([
     Injectable(),

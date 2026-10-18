@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useGetCurrentUserQuery, useGetOrganizationsQuery } from "@/store/api";
+import { useGetCurrentUserQuery, useGetMyTeamsQuery } from "@/store/api";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -15,38 +15,10 @@ import {
 } from "@/components/ui/sidebar";
 import {
   GalleryVerticalEndIcon,
-  AudioLinesIcon,
-  TerminalIcon,
   TerminalSquareIcon,
-  FrameIcon,
-  PieChartIcon,
-  MapIcon,
 } from "lucide-react";
 
-// This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: <GalleryVerticalEndIcon />,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: <AudioLinesIcon />,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: <TerminalIcon />,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
       title: "Workspace",
@@ -69,43 +41,47 @@ const data = {
       ],
     },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: <FrameIcon />,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: <PieChartIcon />,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: <MapIcon />,
-    },
-  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: user } = useGetCurrentUserQuery();
 
-  const { data: organizations = [] } = useGetOrganizationsQuery();
+  const organization = user?.organization;
 
-  const teams = organizations.map((organization) => ({
-    id: organization.id,
-    name: organization.name,
-    logo: <GalleryVerticalEndIcon />,
-    role: organization.role,
-  }));
+  const { data: assignedTeams = [], isLoading: isLoadingTeams, error: teamsError } = useGetMyTeamsQuery();
+
+  const teams = assignedTeams.map((team) => {
+    return {
+      id: team.id,
+      name: team.name,
+      logo: <GalleryVerticalEndIcon />,
+    };
+  });
 
   if (!user) return null;
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={teams} />
+
+        <p className="px-4 py-2 text-sm font-medium text-muted-foreground hidden group-data-[state=expanded]:flex">
+          {organization?.name ?? "No Organization"}
+        </p>
+        {
+          isLoadingTeams ?
+          <p className="px-4 py-2 text-sm font-medium text-muted-foreground hidden group-data-[state=expanded]:flex">
+            Loading teams...
+          </p>:
+          teamsError ?
+          <p className="px-4 py-2 text-sm font-medium text-muted-foreground hidden group-data-[state=expanded]:flex">
+            Unable to load teams
+          </p> :
+          teams.length === 0 ?
+          <p className="px-4 py-2 text-sm font-medium text-muted-foreground hidden group-data-[state=expanded]:flex">
+            No teams available
+          </p> :
+          <TeamSwitcher teams={teams} />
+        }
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

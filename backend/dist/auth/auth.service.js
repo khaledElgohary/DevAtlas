@@ -7,14 +7,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service.js';
 import { MongoServerError } from 'mongodb';
 import * as argon2 from 'argon2';
+import { OrganizationsService } from '../organizations/organizations.service.js';
 let AuthService = class AuthService {
     usersService;
-    constructor(usersService) {
+    organizationService;
+    constructor(usersService, organizationService) {
         this.usersService = usersService;
+        this.organizationService = organizationService;
     }
     async register(dto) {
         const existingUser = await this.usersService.findByEmail(dto.email);
@@ -55,18 +58,21 @@ let AuthService = class AuthService {
     async getCurrentUser(userId) {
         const user = await this.usersService.findById(userId);
         if (!user) {
-            throw new ConflictException('User not found');
+            throw new UnauthorizedException('User not found');
         }
+        const organization = await this.organizationService.getForUser(userId);
         return {
             id: user._id.toString(),
             name: user.name,
             email: user.email,
+            organization: organization,
         };
     }
 };
 AuthService = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [UsersService])
+    __metadata("design:paramtypes", [UsersService,
+        OrganizationsService])
 ], AuthService);
 export { AuthService };
 //# sourceMappingURL=auth.service.js.map

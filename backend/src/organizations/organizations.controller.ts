@@ -35,8 +35,8 @@ export class OrganizationsController {
     
     @Get()
     @UseGuards(SessionAuthGuard)
-    list(@Req() req: Request){
-        return this.organizationsService.listForUser(
+    getMyOrganization(@Req() req: Request){
+        return this.organizationsService.getForUser(
             req.session.userId!,
         )
     }

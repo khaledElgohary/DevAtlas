@@ -17,6 +17,7 @@ import { MembershipModule } from './membership/membership.module.js';
 import { InvitationsModule } from './invitations/invitations.module.js';
 import { TeamsModule } from './teams/teams.module.js';
 import { TeamMembershipModule } from './team-membership/team-membership.module.js';
+import { ServicesModule } from './services/services.module.js';
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 let AppModule = class AppModule {
 };
@@ -43,6 +44,7 @@ AppModule = __decorate([
             InvitationsModule,
             TeamsModule,
             TeamMembershipModule,
+            ServicesModule,
         ],
         controllers: [AppController],
         providers: [AppService],

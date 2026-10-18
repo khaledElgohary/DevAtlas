@@ -23,8 +23,8 @@ let OrganizationsController = class OrganizationsController {
     create(dto, req) {
         return this.organizationsService.createOrganization(dto.name, dto.slug, req.session.userId);
     }
-    list(req) {
-        return this.organizationsService.listForUser(req.session.userId);
+    getMyOrganization(req) {
+        return this.organizationsService.getForUser(req.session.userId);
     }
     listMembers(params, req) {
         return this.organizationsService.listMembers(req.session.userId, params.organizationId);
@@ -46,7 +46,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
-], OrganizationsController.prototype, "list", null);
+], OrganizationsController.prototype, "getMyOrganization", null);
 __decorate([
     Get(':organizationId/members'),
     UseGuards(SessionAuthGuard),

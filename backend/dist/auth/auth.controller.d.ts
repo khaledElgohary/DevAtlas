@@ -22,5 +22,11 @@ export declare class AuthController {
         id: string;
         name: string;
         email: string;
+        organization: {
+            id: string;
+            name: string;
+            slug: string;
+            role: import("../membership/schemas/membership.schema.js").OrganizationRole;
+        } | null;
     }>;
 }

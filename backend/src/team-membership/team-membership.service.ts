@@ -117,5 +117,22 @@ export class TeamMembershipService {
     }
 
 
-    
+    async findByUserId(userId:string): Promise<TeamMembershipDocument[]> {
+        return this.teamMembershipModel.find({userId}).exec();
+    }
+
+    async listMyTeams(userId:string) {
+        const memberships = await this.findByUserId(userId);
+        const teamIds = memberships.map((membership) => membership.teamId.toString());
+        
+        const teams = await this.teamsService.findByIds(teamIds);
+
+        return teams.map(
+            (team) => ({
+                id: team._id.toString(),
+                name: team.name,
+                organizationId: team.organizationId.toString()
+            })
+        )
+    }
 }

@@ -9,7 +9,7 @@ export const api = createApi({
   tagTypes: ["Auth"],
   endpoints: (builder) => ({
     getCurrentUser: builder.query<
-      { id: string; name: string; email: string },
+      { id: string; name: string; email: string; organization: { id: string; name: string; slug: string; role: "owner" | "admin" | "member"; } | null },
       void
     >({
       query: () => "/auth/me",
@@ -35,20 +35,34 @@ export const api = createApi({
       }),
       invalidatesTags: ["Auth"],
     }),
-
-    getOrganizations: builder.query<
+    getMyTeams: builder.query<
       {
         id: string;
         name: string;
-        slug: string;
-        role: 'owner' | 'admin' | 'member';
+        organizationId: string;
       }[],
       void
     >({
-      query: () => "/organizations",
-    })
+      query: () => "/team-membership/me/teams",
+    }),
+
+    getTeamMembers: builder.query<
+      {
+        id: string;
+        name: string;
+        email: string;
+      }[],
+      { teamId: string }
+    >({
+      query: ({ teamId }) => `/team-membership/${teamId}/members`,
+    }),
   }),
 });
 
-export const { useGetCurrentUserQuery, useLoginMutation, useLogoutMutation, useGetOrganizationsQuery } =
-  api;
+export const {
+  useGetCurrentUserQuery,
+  useLoginMutation,
+  useLogoutMutation,
+  useGetMyTeamsQuery,
+  useGetTeamMembersQuery,
+} = api;
