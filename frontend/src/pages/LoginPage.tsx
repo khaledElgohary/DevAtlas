@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import devAtlasLogo from "@/assets/devatlas-lockup.svg";
+import traveLogo from "@/assets/trave-lockup.svg";
 import ResonanceHeading from "@/components/ResonanceHeading";
 import { useNavigate } from "react-router";
 
@@ -30,8 +30,8 @@ export default function LoginPage() {
     <main className="flex min-h-dvh">
       <section className="flex w-full items-center justify-center p-6 lg:w-[40%]">
         <img
-          src={devAtlasLogo}
-          alt="DevAtlas"
+          src={traveLogo}
+          alt="Trave"
           className="absolute left-8 top-8 h-auto w-48"
         />
         <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-8">
