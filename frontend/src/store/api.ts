@@ -6,7 +6,7 @@ export const api = createApi({
     baseUrl: "http://localhost:3000",
     credentials: "include",
   }),
-  tagTypes: ["Auth"],
+  tagTypes: ["Auth", "Services"],
   endpoints: (builder) => ({
     getCurrentUser: builder.query<
       { id: string; name: string; email: string; organization: { id: string; name: string; slug: string; role: "owner" | "admin" | "member"; } | null },
@@ -61,13 +61,16 @@ export const api = createApi({
       {
         id: string;
         name:string;
-        kind: 'api' | 'worker' | 'wep-app' | 'library';
+        kind: 'api' | 'worker' | 'web-app' | 'library';
         teamId: string;
         organizationId: string;
         description: string;
       }[],{teamId:string}
     >({
-      query: ({teamId}) => `/services/${teamId}`
+      query: ({teamId}) => `/services/${teamId}`,
+      providesTags: (_result, _error, { teamId }) => [
+        { type: "Services", id: teamId },
+      ],
     }),
 
     createService: builder.mutation<
@@ -85,7 +88,9 @@ export const api = createApi({
         url: "/services",
         method: "POST",
         body: data,
-      })
+      }),
+      invalidatesTags: (_result, error, {teamId}) => 
+        error ? [] : [{type: "Services", id:teamId}],
     }),
 
   }),
