@@ -68,9 +68,35 @@ export const api = createApi({
       }[],{teamId:string}
     >({
       query: ({teamId}) => `/services/${teamId}`
-    })
+    }),
+
+    createService: builder.mutation<
+      {
+        id: string;
+        name:string;
+        kind: 'api' | 'worker' | 'web-app' | 'library';
+        teamId: string;
+        organizationId: string;
+        description: string;
+      },
+      CreateServiceInput
+    >({
+      query: (data) => ({
+        url: "/services",
+        method: "POST",
+        body: data,
+      })
+    }),
+
   }),
 });
+
+export type CreateServiceInput = {
+  teamId: string;
+  name: string;
+  description?: string;
+  kind: 'api' | 'worker' | 'web-app' | 'library';
+}
 
 export const {
   useGetCurrentUserQuery,
@@ -79,4 +105,5 @@ export const {
   useGetMyTeamsQuery,
   useGetTeamMembersQuery,
   useGetServiceListQuery,
+  useCreateServiceMutation
 } = api;
